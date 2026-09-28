@@ -24,7 +24,7 @@ id, date, branch and commit, state, how to verify, and what's next.
 - Next: ROADMAP → Next steps 1–3.
 
 ## CP-004: Node backend removed; moderators can switch features (2026-09-28)
-- Branch `OneirosV2`. The commit is listed in AUDIT-LOG.md.
+- Branch `OneirosV2`, commit `f4bfef8`.
 - Deleted the unused Node/Supabase backend at the repo root (owner answer to ROADMAP Q1).
 - Moderators can now switch connections, image uploads, voice notes and public research on and off (Q2, RULES R6).
 - Verified: `tests/console-test.py` 64/64 on PHP 8.5.11 + MariaDB.
