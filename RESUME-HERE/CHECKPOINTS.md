@@ -14,7 +14,7 @@ id, date, branch and commit, state, how to verify, and what's next.
 - Verify: `GET /api/health` → `"status":"healthy"` and empty `missing_required`.
 
 ## CP-003: v2.2.0 Console (2026-09-28)
-- Branch `OneirosV2`. The commit is listed in AUDIT-LOG.md.
+- Branch `OneirosV2`, commit `fceb41a`.
 - Adds the Console (`/oneiros-console.php`), the settings engine (`includes/settings.php`), roles
   and permissions (`includes/staff.php`), the audit log, feature switches, maintenance mode, the migrator,
   the mailer settings fix and the RESUME-HERE docs.
