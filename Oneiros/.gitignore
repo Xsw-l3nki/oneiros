@@ -1,0 +1,13 @@
+# Secrets
+includes/config.local.php
+
+# Server logs
+error_log
+*.log
+
+# User-uploaded content
+uploads/**
+!uploads/.htaccess
+
+# Build artifacts
+*.zip

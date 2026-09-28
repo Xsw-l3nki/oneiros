@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Oneiros · A home for your dreams",
+  "short_name": "Oneiros",
+  "description": "A quiet space to remember your dreams, discover patterns, and find dreamers who share them.",
+  "start_url": "./oneiros.php",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080b18",
+  "theme_color": "#080b18",
+  "lang": "en",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {"src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    {"src": "assets/oneiros-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ],
+  "shortcuts": [{"name": "Remember a dream", "short_name": "New dream", "url": "./oneiros.php", "icons": [{"src": "assets/icon-192.png", "sizes": "192x192"}]}]
+}

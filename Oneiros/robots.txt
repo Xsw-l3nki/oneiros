@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /api.php
+Disallow: /includes/
+Disallow: /uploads/
+Disallow: /sql/
+Disallow: /tools/
+Disallow: /oneiros-admin.php
+Disallow: /oneiros-moderation.php
+
+Sitemap: https://oneiros.co.za/sitemap.php

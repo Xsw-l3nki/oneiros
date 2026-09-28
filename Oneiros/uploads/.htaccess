@@ -1,0 +1,5 @@
+# Prevent PHP execution in uploads — security hardening
+<FilesMatch "\.(php|phtml|phar|php3|php4|php5|php7|pl|py|jsp|asp|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+Options -ExecCGI

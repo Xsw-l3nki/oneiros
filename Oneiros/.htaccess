@@ -1,0 +1,36 @@
+# OneIros - Apache 2.4 / cPanel
+DirectoryIndex index.php
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(?:includes|uploads|sql|tools|tests|docs|\.git|\.firecrawl|dist|artifacts)(?:/|$) - [F,L,NC]
+    RewriteRule ^(?:diagnostic\.php|error_log|README\.md|.*\.(?:zip|sql|log|bak|old|env))$ - [F,L,NC]
+    RewriteRule ^oneiros\.html$ oneiros.php [R=302,L]
+    RewriteRule ^oneiros-admin\.html$ oneiros-admin.php [R=302,L]
+    RewriteRule ^oneiros-moderation\.html$ oneiros-moderation.php [R=302,L]
+    RewriteRule ^api/health(?:\.php)?/?$ api.php?_route=health [QSA,L]
+    RewriteRule ^api/(.+)$ api.php?_route=$1 [QSA,L]
+</IfModule>
+
+<FilesMatch "(^\.|\.(?:ini|sql|log|bak|old|env|zip)$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    <FilesMatch "\.(?:php|html)$">
+        Header always set Cache-Control "no-store, private"
+    </FilesMatch>
+    <FilesMatch "\.(?:css|js|webp|avif|png|jpg|jpeg|svg|woff2)$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+    <Files "sw.js">
+        Header always set Cache-Control "no-cache, no-store, must-revalidate"
+    </Files>
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>
