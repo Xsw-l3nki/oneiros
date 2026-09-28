@@ -1,6 +1,5 @@
-node_modules/
-dist/
+# Private files anywhere in the repo (the app's own rules are in Oneiros/.gitignore)
 .env
-logs/
+error_log
 *.log
 .DS_Store

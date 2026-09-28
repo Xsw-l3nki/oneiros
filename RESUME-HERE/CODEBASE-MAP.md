@@ -6,10 +6,11 @@
 /                         GitHub: Xsw-l3nki/oneiros (branch OneirosV2)
 ├── RESUME-HERE/          project memory — read first (this folder)
 ├── CLAUDE.md, AGENTS.md  pointers for AI tools → RESUME-HERE
-├── Oneiros/              ★ the live product: PHP app for Afrihost cPanel (v2.2.0)
-└── src/, supabase/, package.json, railway.json
-                          older Node.js + Supabase backend "v1.0" (Express, TypeScript).
-                          Not the live product. Status is ROADMAP Q1.
+├── README.md             short pointer to the app and to RESUME-HERE
+└── Oneiros/              the product: PHP app for Afrihost cPanel (v2.2.0)
+
+(An older Node.js + Supabase backend "v1.0" lived at the root until CP-004. It was deleted at the
+owner's request and is still in git history at commit 7068e3a.)
 ```
 
 ## The PHP app (`Oneiros/`)
@@ -51,7 +52,8 @@ described in `Oneiros/README.md` (features) and `Oneiros/DEPLOY-AFRIHOST.md` (de
 5. `ONEIROS_*` environment variables, which lock a value (the Console shows it as locked)
 
 Only keys in `Settings::definitions()` can be saved from the Console. Each has a **tier**:
-`operations` (moderators may edit), `core` (admins), `financial` (admins; hidden from moderators).
+`operations` (moderators may edit: maintenance, sign-ups, non-financial feature switches), `core` (admins),
+`financial` (admins; hidden from moderators).
 
 ### Adding a feature the right way (R5)
 

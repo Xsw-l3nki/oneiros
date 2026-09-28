@@ -250,7 +250,7 @@ async function renderSettings(el) {
   settingsCache = data.settings;
   const groups = {};
   settingsCache.forEach(s => (groups[s.group] ??= []).push(s));
-  const tierNote = can('users.lucid') ? '' : '<p class="muted small">As a moderator you can change Operations settings. Other settings are shown for reference; financial settings are hidden.</p>';
+  const tierNote = can('users.lucid') ? '' : '<p class="muted small">As a moderator you can change Operations and Features settings. Other settings are shown for reference; financial settings are hidden.</p>';
   el.innerHTML = `
     <div class="head"><h2>Settings</h2></div>
     ${data.storage_error ? `<p class="error">Settings cannot be saved yet: ${esc(data.storage_error)}. An admin can fix this on the Health page.</p>` : ''}
@@ -485,7 +485,7 @@ async function renderStaff(el) {
       <p class="muted small">Select a person to change or remove their role.</p></div>
     <div class="panel table-wrap"><h3>What each role can do</h3><table class="matrix"><thead><tr><th>Permission</th><th>Admin</th><th>Moderator</th></tr></thead>
       <tbody>${perms.map(([p, roles]) => `<tr><td>${esc(p)}</td><td>${roles.includes('admin') ? '✓' : '—'}</td><td>${roles.includes('moderator') ? '✓' : '—'}</td></tr>`).join('')}</tbody></table>
-      <p class="muted small">Moderators can change Operations settings only and never see financial settings or revenue.</p></div>`;
+      <p class="muted small">Moderators can change Operations and Features settings only, and never see financial settings or revenue.</p></div>`;
   $('#add-staff').onsubmit = async e => {
     e.preventDefault();
     const f = new FormData(e.target);

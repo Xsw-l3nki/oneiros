@@ -103,8 +103,14 @@ try:
     assert 'finance' not in call('console/overview', token=mod)
     mod_settings = {s['key']: s for s in call('console/settings', token=mod)['settings']}
     assert 'payfast_merchant_key' not in mod_settings and 'plans' not in mod_settings, 'moderators must not see financial settings'
-    assert mod_settings['maintenance_mode']['editable'] and not mod_settings['frontend_url']['editable']
+    assert mod_settings['maintenance_mode']['editable'] and mod_settings['feature_connections']['editable']
+    assert not mod_settings['frontend_url']['editable'] and 'feature_payments' not in mod_settings
     call('console/settings', 'PATCH', {'changes': {'min_age': 21}}, mod, 403)
+    call('console/settings', 'PATCH', {'changes': {'feature_payments': False}}, mod, 403)
+    # Moderators may pause non-financial features during an incident
+    call('console/settings', 'PATCH', {'changes': {'feature_connections': False}}, mod)
+    assert call('capabilities')['connections'] is False
+    call('console/settings', 'PATCH', {'changes': {'feature_connections': None}}, mod)
     call('console/settings', 'PATCH', {'changes': {'plans': {}}}, mod, 403)
     call('console/staff', token=mod, expect=403)
     call('console/health?logs=1', token=mod, expect=403)

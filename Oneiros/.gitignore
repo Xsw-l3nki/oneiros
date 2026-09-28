@@ -16,3 +16,6 @@ uploads/**
 includes/config.php
 # Encryption key for secrets saved in the Console (created on the server)
 includes/.settings-key
+
+# Release builds (tools/build-release.py)
+dist/

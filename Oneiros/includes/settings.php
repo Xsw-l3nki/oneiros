@@ -30,7 +30,11 @@ class Settings
     private static ?array $stored = null;
     private static ?string $loadError = null;
 
-    /** Registry of every Console-editable setting. tier decides who may change it. */
+    /**
+     * Registry of every Console-editable setting. tier decides who may change it:
+     * operations = moderators and admins (running the site, incl. non-financial feature switches),
+     * core = admins, financial = admins only and hidden from moderators. See RESUME-HERE/RULES.md R6.
+     */
     public static function definitions(): array
     {
         return [
@@ -50,11 +54,11 @@ class Settings
             'debug' => ['group' => 'Site', 'tier' => 'core', 'type' => 'bool', 'label' => 'Debug details in errors',
                 'help' => 'Shows internal error details in API responses. Keep off on the live site.'],
 
-            'feature_connections' => ['group' => 'Features', 'tier' => 'core', 'type' => 'bool', 'label' => 'Connections and messages',
+            'feature_connections' => ['group' => 'Features', 'tier' => 'operations', 'type' => 'bool', 'label' => 'Connections and messages',
                 'help' => 'Off: dreamers cannot send new connection requests or messages. Existing conversations stay readable.'],
-            'feature_image_upload' => ['group' => 'Features', 'tier' => 'core', 'type' => 'bool', 'label' => 'Dream image uploads'],
-            'feature_audio_upload' => ['group' => 'Features', 'tier' => 'core', 'type' => 'bool', 'label' => 'Voice notes'],
-            'feature_public_research' => ['group' => 'Features', 'tier' => 'core', 'type' => 'bool', 'label' => 'Public research pages and map'],
+            'feature_image_upload' => ['group' => 'Features', 'tier' => 'operations', 'type' => 'bool', 'label' => 'Dream image uploads'],
+            'feature_audio_upload' => ['group' => 'Features', 'tier' => 'operations', 'type' => 'bool', 'label' => 'Voice notes'],
+            'feature_public_research' => ['group' => 'Features', 'tier' => 'operations', 'type' => 'bool', 'label' => 'Public research pages and map'],
 
             'min_age' => ['group' => 'Accounts and security', 'tier' => 'core', 'type' => 'int', 'min' => 18, 'max' => 99, 'label' => 'Minimum age to join',
                 'help' => 'Oneiros is an adult service; this cannot be set below 18.'],

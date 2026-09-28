@@ -38,8 +38,11 @@ configurable, including health checks, statuses, user management capabilities, e
 - **Admin** can do everything.
 - **Moderator** gets enough to run the site day to day, without changing core or financial
   settings. Moderators can view health and status, manage users (suspend, reactivate, sign
-  out), moderate reports, process email and change the *Operations* settings only. They never
+  out), moderate reports, process email and change the *Operations* and *Features* settings only. They never
   see financial settings, revenue, orders or payment keys, and cannot manage staff.
+- Moderators may also switch the **non-financial features** on and off (connections, image uploads,
+  voice notes, public research) so they can pause one during an incident. *(Owner, 2026-09-28.)*
+  Payments, codes and AI painting are financial, so only admins can switch them.
 
 The permission table in `includes/staff.php` (`Staff::PERMISSIONS`) and the setting tiers in
 `includes/settings.php` are the only place these limits live. Admins add moderators from

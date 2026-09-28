@@ -14,7 +14,7 @@
    Health → Run database migrations), then sign in at `/oneiros-console.php`.
 3. **Confirm the sign-up fix on the live server** (register a test account; check Console → Health).
    Close L1 once confirmed.
-4. Owner reviews the Console. Adjust the moderator's Operations tier if they should be able to change more or less.
+4. Owner reviews the Console and says if moderators should be able to change more or less.
 5. Merge `OneirosV2` into `main` once the owner is happy.
 
 ## Ideas not yet agreed (ask per R1 before building)
@@ -28,7 +28,11 @@
 
 ## Open questions for the owner
 
-- **Q1:** Is the Node/Supabase backend at the repo root (`src/`, v1.0) still used anywhere, or can it be
-  archived? Keep it untouched until answered.
-- **Q2:** Should moderators be able to switch individual features (connections, uploads) off during an
-  incident, or should that stay admin-only? Currently admin-only (core tier).
+None open.
+
+## Answered
+
+- **Q1 (2026-09-28):** The Node/Supabase backend at the repo root was unused. Owner: delete it. It was
+  removed in CP-004 and is still in git history (commit `7068e3a`) if ever needed.
+- **Q2 (2026-09-28):** Should moderators switch features off during an incident? Owner: yes. The four
+  non-financial switches moved to the `operations` tier (RULES R6).

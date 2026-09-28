@@ -18,15 +18,15 @@ owner's rules.
 
 ## Current state in one paragraph
 
-*(Keep this paragraph current. Last updated 2026-09-28, checkpoint CP-003.)*
+*(Keep this paragraph current. Last updated 2026-09-28, checkpoint CP-004.)*
 
 Oneiros is a dream-journal web app. The **live product is the PHP app in `Oneiros/`**, hosted
 on Afrihost cPanel (PHP 8.5, MySQL/MariaDB). Version **2.2.0** adds the staff **Console**
 (`/oneiros-console.php`): health checks, statuses, every feature setting, user management,
 staff roles and an audit log. Admins can do everything. Moderators can run the site day to day
-but can't change core or financial settings. Work happens on branch `OneirosV2` of
-`github.com/Xsw-l3nki/oneiros`. The Node/Supabase backend at the repo root is an older v1.0;
-whether it is still needed is an open question (see ROADMAP Q1). **Security to-do for the
+and pause non-financial features, but can't change core or financial settings. Work happens on branch `OneirosV2` of
+`github.com/Xsw-l3nki/oneiros`. The old Node/Supabase backend was deleted (CP-004); the repo
+now contains only the PHP app and these docs. **Security to-do for the
 owner:** rotate the database password and signing secrets leaked in commit `289205f` and make
 the repository private (see LESSONS L2).
 
