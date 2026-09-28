@@ -9,6 +9,7 @@ $user = Auth::require();
 $method = $_SERVER['REQUEST_METHOD'];
 $connectionId = $_GET['connection_id'] ?? '';
 if (!$connectionId) Helpers::respond(['error' => 'Missing connection_id'], 400);
+if ($method !== 'GET') Helpers::requireFeature('connections', 'Messaging is paused for now. Your conversations are safe.');
 
 // Verify access to connection
 $conn = Database::fetchOne(

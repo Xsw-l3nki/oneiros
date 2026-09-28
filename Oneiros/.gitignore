@@ -14,3 +14,5 @@ uploads/**
 
 # Live config (DB password, signing secrets)
 includes/config.php
+# Encryption key for secrets saved in the Console (created on the server)
+includes/.settings-key

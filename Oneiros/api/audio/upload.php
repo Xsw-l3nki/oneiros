@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../includes/streaks.php';
 Helpers::only(['POST']);
 $user = Auth::require();
 $cfg = require __DIR__ . '/../../includes/runtime-config.php';
+Helpers::requireFeature('audio_upload', 'Voice notes are paused for now.');
 $dreamId = (string)($_POST['dream_id'] ?? '');
 $dream = Database::fetchOne('SELECT * FROM dreams WHERE id = ? AND user_id = ? AND is_removed = 0', [$dreamId, $user['userId']]);
 if (!$dream) Helpers::respond(['error' => 'Dream not found'], 404);

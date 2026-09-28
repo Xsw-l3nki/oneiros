@@ -33,6 +33,24 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     exit;
 }
 
+// Maintenance mode (Console → Settings → Operations): only staff and sign-in keep working.
+if (!empty($cfg['maintenance_mode'])) {
+    $apiPath = trim((string)($_GET['_route'] ?? preg_replace('#^.*/api/#', '', strtok($_SERVER['REQUEST_URI'] ?? '', '?'))), '/');
+    $apiPath = preg_replace('/\.php$/', '', $apiPath);
+    $open = preg_match('#^(health|capabilities|auth/(login|refresh|logout|me)|console/|admin/)#', $apiPath);
+    if (!$open) {
+        require_once __DIR__ . '/auth.php';
+        $viewer = Auth::user();
+        if (!$viewer || (!$viewer['isAdmin'] && !$viewer['isModerator'])) {
+            http_response_code(503);
+            header('Content-Type: application/json; charset=utf-8');
+            header('Retry-After: 600');
+            echo json_encode(['error' => $cfg['maintenance_message'], 'maintenance' => true]);
+            exit;
+        }
+    }
+}
+
 // Disable caching of API responses
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');

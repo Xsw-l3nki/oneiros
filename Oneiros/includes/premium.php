@@ -65,7 +65,7 @@ class Premium
     {
         $cfg = self::cfg();
         $providers = [];
-        if (!function_exists('curl_init')) return $providers;
+        if (!function_exists('curl_init') || empty($cfg['feature_payments'])) return $providers;
         if (!empty($cfg['payfast_merchant_id']) && !empty($cfg['payfast_merchant_key'])) $providers[] = 'payfast';
         if (!empty($cfg['paystack_secret_key'])) $providers[] = 'paystack';
         return $providers;

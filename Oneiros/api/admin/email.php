@@ -10,9 +10,10 @@ require_once __DIR__ . '/../../includes/cors.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/staff.php';
 require_once __DIR__ . '/../../includes/mailer.php';
 
-Auth::requireAdmin();
+$admin = Auth::requireAdmin();
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 
@@ -31,6 +32,7 @@ if ($method === 'GET' && $action === 'stats') {
 // ─── POST /admin/email/process — flush queue ───
 if ($method === 'POST' && $action === 'process') {
     $sent = Mailer::processQueue(50);
+    Staff::audit($admin, 'email.process', "Observatory: sent $sent queued email(s)", 'system', 'email_queue');
     Helpers::respond(['sent' => $sent, 'message' => "Processed {$sent} emails from queue"]);
 }
 
@@ -84,6 +86,7 @@ if ($method === 'POST' && $action === 'campaign') {
         }
     }
 
+    Staff::audit($admin, 'email.campaign', "Observatory: queued $queued '{$template}' campaign email(s)", 'system', 'email_queue');
     Helpers::respond([
         'queued'  => $queued,
         'message' => "Queued {$queued} emails for '{$template}' campaign",

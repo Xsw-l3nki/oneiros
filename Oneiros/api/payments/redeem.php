@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../includes/payments.php';
 
 Helpers::only(['POST']);
 $user = Auth::require();
+Helpers::requireFeature('codes', 'Codes cannot be redeemed right now.');
 if (!Security::rateLimit('redeem_' . $user['userId'], 10, 3600)) {
     Helpers::respond(['error' => 'Too many attempts. Please try again later.'], 429);
 }

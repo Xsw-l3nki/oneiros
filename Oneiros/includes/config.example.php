@@ -19,6 +19,7 @@ return [
     'max_file_size' => 10 * 1024 * 1024,
     'min_age' => 18,
     'mail_from' => 'noreply@example.com',
+    'mail_from_name' => 'Oneiros',
     'mail_enabled' => false,
     // Optional paid image provider. Keep the key server-side; blank enables local Dream Canvas only.
     'image_api_key' => '',
@@ -55,8 +56,24 @@ return [
     // Invite a friend: both receive these Lucid days once the friend saves their first dream.
     'referral_reward_days' => 7,
     'referral_max_rewards_per_year' => 12,
+    // ─── Operations and feature switches (all editable in the Console, /oneiros-console.php) ───
+    'maintenance_mode' => false,
+    'maintenance_message' => 'Oneiros is resting for a short while. Please come back soon.',
+    'feature_registrations' => true,
+    'registrations_closed_message' => 'New sign-ups are paused for now. Please try again soon.',
+    'feature_connections' => true,
+    'feature_image_upload' => true,
+    'feature_audio_upload' => true,
+    'feature_public_research' => true,
+    'feature_payments' => true,
+    'feature_codes' => true,
+    'feature_ai_paint' => true,
+    // Encrypts secrets saved from the Console. Leave blank to use includes/.settings-key (created
+    // automatically). If you set it, use 64 hex characters: php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
+    // Changing or losing it means secrets saved in the Console must be entered again.
+    'settings_key' => '',
     'app_name' => 'Oneiros',
-    'app_version' => '2.1.0',
+    'app_version' => '2.2.0',
     'environment' => 'production',
     'debug' => false,
 ];

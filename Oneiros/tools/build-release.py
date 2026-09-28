@@ -1,6 +1,6 @@
 """Build the cPanel release ZIP from an explicit allowlist.
 
-Configuration (includes/config.php, includes/config.local.php), user uploads, logs,
+Configuration (includes/config.php, includes/config.local.php, includes/.settings-key), user uploads, logs,
 tests and development tools are never included, so the ZIP can be extracted over a
 live site without touching its settings or its dreamers' files.
 
@@ -12,14 +12,14 @@ import time
 import zipfile
 from pathlib import Path
 
-VERSION = '2.1.0'
+VERSION = '2.2.0'
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'dist' / f'oneiros-v{VERSION}-cpanel.zip'
 
 ROOT_FILES = [
     '.htaccess', 'api.php', 'index.php', 'manifest.json', 'sw.js', 'robots.txt', 'sitemap.php',
     'oneiros.php', 'oneiros.html', 'oneiros-admin.php', 'oneiros-admin.html',
-    'oneiros-moderation.php', 'oneiros-moderation.html', 'README.md', 'DEPLOY-AFRIHOST.md',
+    'oneiros-moderation.php', 'oneiros-moderation.html', 'oneiros-console.php', 'README.md', 'DEPLOY-AFRIHOST.md',
 ]
 TREES = {  # folder: allowed file suffixes
     'api': {'.php'},
@@ -29,7 +29,7 @@ TREES = {  # folder: allowed file suffixes
 }
 EXTRA_FILES = ['tools/console.php', 'uploads/.htaccess']
 EMPTY_DIRS = ['uploads/dreams/', 'uploads/audio/', 'uploads/paintings/']
-NEVER = {'includes/config.php', 'includes/config.local.php', 'assets/dreamscape-master.png'}
+NEVER = {'includes/config.php', 'includes/config.local.php', 'includes/.settings-key', 'assets/dreamscape-master.png'}
 
 
 def collect():

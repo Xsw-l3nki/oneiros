@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/matching.php';
+require_once __DIR__ . '/../../includes/staff.php';
 
 $currentUser = Auth::requireModerator();
 $method = $_SERVER['REQUEST_METHOD'];
@@ -89,6 +90,8 @@ if (($method === 'PATCH' || $method === 'POST') && $id) {
         }
     }
 
+    Staff::audit($currentUser, 'moderation.' . $status, "Marked a report on dream {$existingFlag['dream_id']} as $status" . ($action ? " — $action" : ''), 'flag', $id,
+        ['dream_id' => $existingFlag['dream_id'], 'reason' => $existingFlag['reason'] ?? null]);
     Helpers::respond(['message' => 'Flag updated']);
 }
 

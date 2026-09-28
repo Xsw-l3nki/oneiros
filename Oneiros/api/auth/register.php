@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../includes/mailer.php';
 
 Helpers::only(['POST']);
 $cfg = require __DIR__ . '/../../includes/runtime-config.php';
+Helpers::requireFeature('registrations', $cfg['registrations_closed_message']);
 $input = Helpers::input();
 Helpers::require_fields($input, ['email', 'password', 'date_of_birth', 'research_consent', 'tos_accepted']);
 

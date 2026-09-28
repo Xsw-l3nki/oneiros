@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/premium.php';
+require_once __DIR__ . '/../../includes/staff.php';
+require_once __DIR__ . '/../../includes/media.php';
 
 $currentAdmin = Auth::requireAdmin();
 $method = $_SERVER['REQUEST_METHOD'];
@@ -41,6 +43,11 @@ if (($method === 'PATCH' || $method === 'POST') && $id) {
     if (count($updates) > 0) {
         Database::update('users', $updates, 'id', $id);
     }
+    $changed = array_intersect_key($input, array_flip(['is_active', 'is_moderator', 'is_premium']));
+    if ($changed) {
+        $target = Database::fetchOne('SELECT email FROM users WHERE id = ?', [$id]);
+        Staff::audit($currentAdmin, 'user.update', 'Observatory: updated ' . ($target['email'] ?? $id) . ' (' . implode(', ', array_map(fn($k, $v) => $k . '=' . ($v ? 'on' : 'off'), array_keys($changed), $changed)) . ')', 'user', $id, $changed);
+    }
 
     $user = Database::fetchOne('SELECT * FROM users WHERE id = ?', [$id]);
     Helpers::respond(['user' => Auth::safeUser($user)]);
@@ -48,8 +55,11 @@ if (($method === 'PATCH' || $method === 'POST') && $id) {
 
 if ($method === 'DELETE' && $id) {
     if ($id === $currentAdmin['userId']) Helpers::respond(['error' => 'Use account settings to delete your own account.'], 400);
+    $target = Database::fetchOne('SELECT email FROM users WHERE id = ?', [$id]);
+    Media::purgeUser($id);
     Database::query('DELETE FROM research_events WHERE created_by = ?', [$id]);
     Database::delete('users', 'id', $id);
+    Staff::audit($currentAdmin, 'user.delete', 'Observatory: deleted the account ' . ($target['email'] ?? $id) . ' and its files', 'user', $id);
     Helpers::respond(['message' => 'User deleted']);
 }
 

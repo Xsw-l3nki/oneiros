@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../includes/cors.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/staff.php';
 require_once __DIR__ . '/../../includes/payments.php';
 
 $admin = Auth::requireAdmin();
@@ -71,6 +72,7 @@ if ($method === 'POST' || $method === 'PATCH') {
         if ($order['status'] === 'paid') Helpers::respond(['error' => 'This order is already paid.'], 400);
         $order = Premium::fulfill($order['id'], 'manual:' . $admin['email'], null);
         Premium::logEvent($order['provider'], $order['id'], 'marked_paid', true, 'by ' . $admin['email']);
+        Staff::audit($admin, 'orders.mark_paid', "Observatory: marked order {$order['reference']} as paid", 'order', $order['id']);
         Helpers::respond(['order' => Premium::publicOrder($order)]);
     }
     if ($action === 'refund') {
@@ -80,6 +82,7 @@ if ($method === 'POST' || $method === 'PATCH') {
         if ($order['kind'] === 'pass' && $order['user_id']) Premium::reduce($order['user_id'], (int)$order['days']);
         if ($order['kind'] === 'gift' && $order['gift_code']) Database::query('UPDATE premium_codes SET is_active = 0 WHERE code = ?', [$order['gift_code']]);
         Premium::logEvent($order['provider'], $order['id'], 'refunded', true, 'by ' . $admin['email']);
+        Staff::audit($admin, 'orders.refund', "Observatory: recorded a refund for order {$order['reference']}", 'order', $order['id']);
         Helpers::respond(['order' => Premium::publicOrder(Database::fetchOne('SELECT * FROM premium_orders WHERE id = ?', [$order['id']]))]);
     }
     Helpers::respond(['error' => 'Unknown action'], 400);

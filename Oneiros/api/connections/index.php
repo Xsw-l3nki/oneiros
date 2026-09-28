@@ -68,6 +68,7 @@ if ($method === 'GET') {
 
 // POST /connections - request
 if ($method === 'POST') {
+    Helpers::requireFeature('connections', 'New connections are paused for now.');
     $input = Helpers::input();
     Helpers::require_fields($input, ['receiver_id']);
 

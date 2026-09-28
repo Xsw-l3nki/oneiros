@@ -1,4 +1,4 @@
-# Deploying Oneiros 2.1 on Afrihost cPanel (with Terminal)
+# Deploying Oneiros 2.2 on Afrihost cPanel (with Terminal)
 
 This guide takes you from the release ZIP to a live site. There are two paths:
 
@@ -58,13 +58,13 @@ ls -lh backups
 ### A2. Upload and unpack the release
 
 1. **cPanel → Files → File Manager**, open your home folder (the one that *contains* `public_html`, not `public_html` itself).
-2. **Upload** `oneiros-v2.1.0-cpanel.zip`.
+2. **Upload** `oneiros-v2.2.0-cpanel.zip`.
 3. In Terminal:
 
 ```bash
 cd ~
 rm -rf oneiros-release
-unzip -q oneiros-v2.1.0-cpanel.zip -d oneiros-release
+unzip -q oneiros-v2.2.0-cpanel.zip -d oneiros-release
 ls oneiros-release          # you should see api/, assets/, includes/, oneiros.php …
 ```
 
@@ -94,7 +94,7 @@ You should see:
 
 ```
 Schema updated. Existing accounts, dreams and messages were retained.
-OK: PHP 8.x, required extensions, database connection, 18 tables, upload permissions, and configuration.
+OK: PHP 8.x, required extensions, database connection, 20 tables, upload permissions, and configuration.
 ```
 
 `migrate` only adds what is missing, so it is safe to run more than once. If `check` reports a problem, see **Troubleshooting** below.
@@ -112,7 +112,17 @@ mkdir -p uploads/dreams uploads/audio uploads/paintings
 
 Visit `https://YOURDOMAIN/`. The new version installs itself in visitors' browsers automatically; if you still see the old design, do one hard refresh (Ctrl + Shift + R, or close and reopen the app on a phone).
 
-Then run the **Verification checklist** at the end of this guide.
+Then open the **Console** (next section) and run the **Verification checklist** at the end of this guide.
+
+### A7. The Console (new in 2.2)
+
+Sign in at `https://YOURDOMAIN/oneiros-console.php` with your admin account.
+
+- **Health** lists every check (PHP extensions, database schema, uploads, email, payments, errors in the log). If *Schema* is red, press **Run database migrations**.
+- **Settings** holds every feature switch, limit, price, email setting and payment key. Values saved here override `includes/config.php`, apply immediately and are recorded in the **Audit log**.
+- **Staff** adds moderators. They sign in at the same address with their own account, can run the site day to day, and cannot change core or financial settings.
+
+Payment and API keys saved in the Console are encrypted with `includes/.settings-key`, which is created the first time you save one. **Back it up with `config.php`** and never delete it: without it those keys must be entered again. Because `cp -a` in A3 copies over the existing folder, upgrades keep it.
 
 ---
 
@@ -127,11 +137,11 @@ Then run the **Verification checklist** at the end of this guide.
 
 ### B2. Upload and unpack
 
-Upload `oneiros-v2.1.0-cpanel.zip` to your home folder with File Manager, then:
+Upload `oneiros-v2.2.0-cpanel.zip` to your home folder with File Manager, then:
 
 ```bash
 cd ~
-unzip -q oneiros-v2.1.0-cpanel.zip -d oneiros-release
+unzip -q oneiros-v2.2.0-cpanel.zip -d oneiros-release
 cp -a ~/oneiros-release/. ~/public_html/
 ```
 
@@ -323,7 +333,7 @@ Run these after either path.
 
 ```bash
 curl -s https://YOURDOMAIN/api/health
-# {"status":"healthy","service":"Oneiros","version":"2.0.0",…}
+# {"status":"healthy","service":"Oneiros","version":"2.2.0",…}
 curl -s -o /dev/null -w "%{http_code}\n" https://YOURDOMAIN/includes/config.php
 # 403  (the configuration must never be downloadable)
 ```
@@ -340,6 +350,8 @@ Then in a browser:
 - [ ] `/oneiros-admin.php` shows the Observatory charts for your admin account.
 - [ ] **Revenue & codes** opens. With payments configured, a sandbox (or small real) purchase appears there and on your profile with a receipt.
 - [ ] Create a promo code, redeem it from **Profile → Membership**, and see the Lucid mark appear.
+- [ ] `/oneiros-console.php` → **Health** shows no red checks (warnings such as "Email: off" are fine until you set email up).
+- [ ] Register a new test account in the app: sign-up works. Then delete it from Console → **Users**.
 - [ ] Delete the test dream when you are done.
 
 ---

@@ -346,3 +346,32 @@ CREATE TABLE IF NOT EXISTS `payment_events` (
   `created_at`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX `idx_payment_events_order` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ─── v2.2 Console ───
+-- Settings saved from the Console. Secret values are encrypted (is_encrypted = 1).
+CREATE TABLE IF NOT EXISTS `app_settings` (
+  `setting_key`   VARCHAR(80) NOT NULL PRIMARY KEY,
+  `setting_value` MEDIUMTEXT DEFAULT NULL,
+  `is_encrypted`  TINYINT(1) NOT NULL DEFAULT 0,
+  `updated_by`    CHAR(36) DEFAULT NULL,
+  `updated_at`    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Every staff action taken in the Console. Rows are never edited or deleted by the app.
+CREATE TABLE IF NOT EXISTS `audit_log` (
+  `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `actor_id`    CHAR(36) DEFAULT NULL,
+  `actor_email` VARCHAR(255) DEFAULT NULL,
+  `actor_role`  VARCHAR(20) NOT NULL,
+  `action`      VARCHAR(60) NOT NULL,
+  `target_type` VARCHAR(40) DEFAULT NULL,
+  `target_id`   VARCHAR(80) DEFAULT NULL,
+  `summary`     VARCHAR(500) NOT NULL,
+  `details`     TEXT DEFAULT NULL,
+  `ip`          VARCHAR(64) DEFAULT NULL,
+  `created_at`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_audit_created` (`created_at`),
+  INDEX `idx_audit_actor` (`actor_id`),
+  INDEX `idx_audit_action` (`action`),
+  INDEX `idx_audit_target` (`target_type`, `target_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

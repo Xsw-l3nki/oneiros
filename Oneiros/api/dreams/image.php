@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../includes/media.php';
 Helpers::only(['POST']);
 $cfg = require __DIR__ . '/../../includes/runtime-config.php';
 $user = Auth::require();
+Helpers::requireFeature('image_upload', 'Image uploads are paused for now.');
 
 $dreamId = $_POST['dream_id'] ?? $_GET['dream_id'] ?? '';
 if (!$dreamId) Helpers::respond(['error' => 'Missing dream_id'], 400);

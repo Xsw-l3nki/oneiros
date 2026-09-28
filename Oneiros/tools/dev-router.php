@@ -3,7 +3,7 @@
 if (PHP_SAPI !== 'cli-server') { http_response_code(404); exit; }
 $root = dirname(__DIR__);
 $path = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/');
-if (preg_match('#^/(?:includes|uploads|sql|tools|tests|docs|\.git|\.firecrawl|dist|artifacts)(?:/|$)#i', $path)
+if (preg_match('#^/(?:includes|uploads|sql|tools|tests|docs|RESUME-HERE|\.git|\.firecrawl|dist|artifacts)(?:/|$)#i', $path)
     || preg_match('#(?:^/diagnostic\.php$|error_log$|\.(?:zip|sql|log|bak|old|env)$)#i', $path)) {
     http_response_code(403); echo 'Forbidden'; return true;
 }

@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../includes/cors.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/staff.php';
 require_once __DIR__ . '/../../includes/premium.php';
 
 // Grant Lucid days (for EFT payments, competitions, apologies) or end a pass.
@@ -25,4 +26,6 @@ if (!empty($input['revoke'])) {
         'body'  => "{$days} Lucid nights were added to your account.",
     ]);
 }
+Staff::audit($admin, !empty($input['revoke']) ? 'user.lucid_end' : 'user.lucid_grant',
+    'Observatory: ' . (!empty($input['revoke']) ? "ended the Lucid pass of {$target['email']}" : "granted {$target['email']} " . (int)$input['days'] . ' Lucid days'), 'user', $target['id']);
 Helpers::respond(['email' => $target['email']] + Premium::status($target['id']));

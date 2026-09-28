@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../includes/cors.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/staff.php';
 require_once __DIR__ . '/../../includes/premium.php';
 
 $admin = Auth::requireAdmin();
@@ -41,12 +42,15 @@ if ($method === 'POST') {
     } catch (InvalidArgumentException $e) {
         Helpers::respond(['error' => $e->getMessage(), 'created' => array_column($created, 'code')], 400);
     }
+    Staff::audit($admin, 'codes.create', 'Observatory: created ' . count($created) . " $kind code(s)" . ($kind === 'promo' ? ' worth ' . (int)($input['days'] ?? 0) . ' days' : ' for ' . (int)($input['percent_off'] ?? 0) . '% off'),
+        'code', $created[0]['id'] ?? null, ['codes' => array_column($created, 'code'), 'max_uses' => (int)($input['max_uses'] ?? 1), 'expires_on' => $expires ?: null]);
     Helpers::respond(['created' => array_column($created, 'code')], 201);
 }
 
 if ($method === 'PATCH') {
     $input = Helpers::input();
     Database::query('UPDATE premium_codes SET is_active = ? WHERE id = ?', [(int)!empty($input['is_active']), (string)($input['id'] ?? '')]);
+    Staff::audit($admin, 'codes.update', 'Observatory: ' . (!empty($input['is_active']) ? 'enabled' : 'disabled') . ' a code', 'code', (string)($input['id'] ?? ''));
     Helpers::respond(['message' => 'Code updated']);
 }
 

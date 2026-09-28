@@ -45,35 +45,9 @@ try {
         $pdo->exec(file_get_contents($root . '/sql/schema.sql'));
         echo "Complete schema installed.\n";
     } elseif ($command === 'migrate') {
-        // Query metadata rather than using MariaDB-only ADD COLUMN IF NOT EXISTS.
-        $columns = [
-            'users' => [
-                'current_streak' => 'INT NOT NULL DEFAULT 0', 'longest_streak' => 'INT NOT NULL DEFAULT 0',
-                'last_dream_date' => 'DATE DEFAULT NULL', 'referral_code' => 'VARCHAR(20) DEFAULT NULL',
-                'referred_by' => 'CHAR(36) DEFAULT NULL', 'last_seen_at' => 'TIMESTAMP NULL DEFAULT NULL',
-                'premium_until' => 'DATETIME DEFAULT NULL', 'premium_reminded_until' => 'DATETIME DEFAULT NULL',
-                'is_patron' => 'TINYINT(1) NOT NULL DEFAULT 0', 'referral_rewarded' => 'TINYINT(1) NOT NULL DEFAULT 0',
-            ],
-            'dreams' => ['word_count' => 'SMALLINT UNSIGNED DEFAULT 0'],
-        ];
-        foreach ($columns as $table => $definitions) {
-            foreach ($definitions as $name => $definition) {
-                $query = $pdo->prepare('SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?');
-                $query->execute([$table, $name]);
-                if (!$query->fetchColumn()) $pdo->exec("ALTER TABLE `$table` ADD COLUMN `$name` $definition");
-            }
-        }
-        foreach (['uk_referral_code' => 'UNIQUE KEY `uk_referral_code` (`referral_code`)', 'idx_last_seen' => 'INDEX `idx_last_seen` (`last_seen_at`)'] as $name => $definition) {
-            $query = $pdo->prepare('SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?');
-            $query->execute(['users', $name]);
-            if (!$query->fetchColumn()) $pdo->exec("ALTER TABLE users ADD $definition");
-        }
-        $pdo->exec(file_get_contents($root . '/sql/schema.sql'));
-        $pdo->exec("UPDATE users SET referral_code = UPPER(SUBSTRING(MD5(id), 1, 8)) WHERE referral_code IS NULL");
-        // Accounts flagged premium before 2.1 keep access as a 30-day Lucid pass
-        $pdo->exec("UPDATE users SET premium_until = DATE_ADD(NOW(), INTERVAL 30 DAY) WHERE is_premium = 1 AND premium_until IS NULL");
-        $pdo->exec("UPDATE dreams SET word_count = LEAST(65535, LENGTH(content) - LENGTH(REPLACE(content, ' ', '')) + 1) WHERE word_count = 0 AND content IS NOT NULL");
-        echo "Schema updated. Existing accounts, dreams and messages were retained.\n";
+        require_once $root . '/includes/migrator.php';
+        $steps = Migrator::run($pdo, $root . '/sql/schema.sql');
+        echo ($steps ? implode("\n", $steps) . "\n" : '') . "Schema updated. Existing accounts, dreams and messages were retained.\n";
     } elseif ($command === 'admin') {
         $email = $argv[2] ?? '';
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new RuntimeException('Usage: php tools/console.php admin you@example.com');
@@ -135,10 +109,10 @@ try {
         throw new RuntimeException('Unknown command. Run php tools/console.php help');
     }
     if (in_array($command, ['check', 'install', 'migrate'], true)) {
-        $required = ['users','dreams','dream_matches','connections','messages','notifications','moderation_flags','recurring_dream_groups','research_events','refresh_tokens','user_badges','email_queue','dream_audio','referrals','premium_orders','premium_codes','premium_redemptions','payment_events'];
-        $existing = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
-        $missing = array_diff($required, $existing);
-        if ($missing) throw new RuntimeException('Missing tables: ' . implode(', ', $missing));
+        require_once $root . '/includes/migrator.php';
+        $pending = Migrator::pending($pdo);
+        if ($pending) throw new RuntimeException('Database needs migrating (php tools/console.php migrate): ' . implode(', ', $pending));
+        $required = Migrator::TABLES;
         foreach (['dreams', 'audio'] as $folder) {
             $path = rtrim($cfg['upload_dir'], '/\\') . '/' . $folder;
             if (!is_dir($path) && !mkdir($path, 0755, true)) throw new RuntimeException("Cannot create uploads/$folder");

@@ -4,7 +4,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^(?:includes|uploads|sql|tools|tests|docs|\.git|\.firecrawl|dist|artifacts)(?:/|$) - [F,L,NC]
+    RewriteRule ^(?:includes|uploads|sql|tools|tests|docs|RESUME-HERE|\.git|\.firecrawl|dist|artifacts)(?:/|$) - [F,L,NC]
     RewriteRule ^(?:diagnostic\.php|error_log|README\.md|.*\.(?:zip|sql|log|bak|old|env))$ - [F,L,NC]
     RewriteRule ^oneiros\.html$ oneiros.php [R=302,L]
     RewriteRule ^oneiros-admin\.html$ oneiros-admin.php [R=302,L]

@@ -9,7 +9,7 @@
 // Always return JSON, never HTML errors
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+error_reporting(E_ALL & ~E_DEPRECATED);  // E_STRICT is part of E_ALL since PHP 8 and deprecated in 8.4
 
 set_exception_handler(function($e) {
     $cfg = @include __DIR__ . '/includes/runtime-config.php';
@@ -206,6 +206,15 @@ switch ($segments[0] ?? '') {
         } elseif ($sub === 'dreams' && isset($segments[2]) && ($segments[3] ?? '') === 'privacy') {
             $_GET['id'] = $segments[2];
             $file = __DIR__ . '/api/dreams/privacy.php';
+        }
+        break;
+
+    // ─── /api/console/* — staff Console (see includes/staff.php for permissions) ───
+    case 'console':
+        $sub = $segments[1] ?? '';
+        if (in_array($sub, ['me', 'overview', 'health', 'settings', 'users', 'staff', 'audit', 'email'], true)) {
+            if (isset($segments[2]) && $sub === 'users') $_GET['id'] = $segments[2];
+            $file = __DIR__ . "/api/console/$sub.php";
         }
         break;
 

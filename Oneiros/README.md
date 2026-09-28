@@ -1,8 +1,27 @@
-# Oneiros 2.1 · Nocturne + Lucid
+# Oneiros 2.2 · Nocturne + Lucid + Console
 
 A home for your dreams. Dreamers keep a private journal, discover people around the world who dreamed something similar, and see the patterns in their own nights. PHP 8.2 + MySQL, built for shared cPanel hosting. No build step, no Node, no Composer.
 
 **To deploy, follow [DEPLOY-AFRIHOST.md](DEPLOY-AFRIHOST.md).**
+
+## What's new in 2.2: the Console
+
+- **Console** (`/oneiros-console.php`) is the staff control room:
+  - **Overview**: live status and numbers.
+  - **Health**: every check, a migration button and an error-log viewer.
+  - **Settings**: every feature switch, limit, price, email setting and payment key, with no file editing.
+  - **Users**: search, suspend, sign out, edit, grant Lucid, delete.
+  - **Staff**: add moderators and admins.
+  - **Moderation**, **Email** and the **Audit log**, which records every staff action.
+- **Roles**: admins can do everything. Moderators run the site day to day but cannot change core or financial settings or see revenue (`includes/staff.php`).
+- **Feature switches and maintenance mode**: pause sign-ups, connections, uploads, public research, payments, codes or AI painting. Maintenance mode shows dreamers a message while staff keep working.
+- **Fixes**:
+  - sign-up no longer fails on servers without the PHP mbstring extension
+  - email settings (`mail_from`, `mail_enabled`) are respected
+  - deleting a user removes their files
+  - PHP 8.4/8.5 deprecation warnings removed
+
+Settings are layered: shipped defaults → `includes/config.php` → Console values (database) → `ONEIROS_*` environment variables. See `includes/settings.php`.
 
 ## What's new in 2.1: Lucid
 
@@ -43,6 +62,7 @@ A home for your dreams. Dreamers keep a private journal, discover people around 
 ```
 oneiros.php              the dreamer app (single page)
 oneiros-admin.php        research observatory      oneiros-moderation.php   moderation studio
+oneiros-console.php      staff Console             includes/settings.php    all configuration + Console settings
 api.php                  API front controller (works with or without mod_rewrite)
 api/                     endpoint handlers         includes/                shared PHP libraries + config
 assets/base.css          structural styles         assets/dream.css         Nocturne theme
@@ -69,12 +89,13 @@ API integration checks (they create and delete test accounts, so use a disposabl
 
 ```bash
 python tests/api-smoke.py http://127.0.0.1:8080 --allow-write-tests
+# Console checks need an existing admin account; see the header of tests/console-test.py
 ```
 
 Build the deployable ZIP (it leaves out configuration files, uploads, logs and development tools):
 
 ```bash
-python tools/build-release.py        # writes dist/oneiros-v2.1.0-cpanel.zip
+python tools/build-release.py        # writes dist/oneiros-v2.2.0-cpanel.zip
 ```
 
 Payments integration checks run against a local server started with test PayFast credentials; see the header of `tests/payments-test.py`.

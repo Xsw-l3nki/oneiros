@@ -13,13 +13,11 @@ class Mailer
      */
     public static function send(string $to, string $toName, string $template, array $vars): bool
     {
-        $host     = $_SERVER['HTTP_HOST'] ?? 'oneiros.dream';
-        $from     = 'noreply@' . $host;
-        $fromName = 'Oneiros Dreams';
-        $appUrl   = 'https://' . $host;
+        [$from, $fromName, $appUrl, $appName, $enabled] = self::sender();
+        if (!$enabled) return false;  // Console → Settings → Email → Send emails
 
         $vars['app_url']   = $appUrl;
-        $vars['app_name']  = 'Oneiros';
+        $vars['app_name']  = $appName;
         $vars['year']      = date('Y');
         $vars['to_name']   = $toName ?: 'Dreamer';
 
@@ -29,9 +27,9 @@ class Mailer
 
         $headers  = "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: {$fromName} <{$from}>\r\n";
+        $headers .= 'From: ' . mb_encode_mimeheader($fromName, 'UTF-8') . " <{$from}>\r\n";
         $headers .= "Reply-To: {$from}\r\n";
-        $headers .= "X-Mailer: Oneiros/1.1\r\n";
+        $headers .= "X-Mailer: Oneiros\r\n";
 
         $result = @mail($toHeader, $subject, $html, $headers);
 
@@ -50,7 +48,7 @@ class Mailer
         $cfg = require __DIR__ . '/runtime-config.php';
         $vars += [
             'app_url'  => rtrim($cfg['frontend_url'] ?? ('https://' . ($_SERVER['HTTP_HOST'] ?? '')), '/'),
-            'app_name' => 'Oneiros',
+            'app_name' => $cfg['app_name'],
             'year'     => date('Y'),
             'to_name'  => $toName ?: 'Dreamer',
         ];
@@ -84,11 +82,10 @@ class Mailer
             [$limit]
         );
 
+        [$from, $fromName, , , $enabled] = self::sender();
+        if (!$enabled) return 0;
         $sent = 0;
         foreach ($rows as $row) {
-            $host     = $_SERVER['HTTP_HOST'] ?? 'oneiros.dream';
-            $from     = 'noreply@' . $host;
-            $fromName = 'Oneiros Dreams';
 
             $toHeader = $row['to_name']
                 ? mb_encode_mimeheader($row['to_name'], 'UTF-8') . " <{$row['to_email']}>"
@@ -96,7 +93,7 @@ class Mailer
 
             $headers  = "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-            $headers .= "From: {$fromName} <{$from}>\r\n";
+            $headers .= 'From: ' . mb_encode_mimeheader($fromName, 'UTF-8') . " <{$from}>\r\n";
             $headers .= "Reply-To: {$from}\r\n";
 
             $ok = @mail($toHeader, $row['subject'], $row['body_html'], $headers);
@@ -114,6 +111,16 @@ class Mailer
         }
 
         return $sent;
+    }
+
+    /** Sender details from Console settings: [from, fromName, appUrl, appName, enabled]. */
+    private static function sender(): array
+    {
+        $cfg = require __DIR__ . '/runtime-config.php';
+        $host = $_SERVER['HTTP_HOST'] ?? (parse_url($cfg['frontend_url'], PHP_URL_HOST) ?: 'localhost');
+        $from = filter_var($cfg['mail_from'] ?? '', FILTER_VALIDATE_EMAIL) && !str_ends_with($cfg['mail_from'], '@example.com')
+            ? $cfg['mail_from'] : 'noreply@' . preg_replace('/^www\./', '', $host);
+        return [$from, $cfg['mail_from_name'] ?: $cfg['app_name'], $cfg['frontend_url'] ?: 'https://' . $host, $cfg['app_name'], (bool)$cfg['mail_enabled']];
     }
 
     // ─── Template renderers ───────────────────────────────────

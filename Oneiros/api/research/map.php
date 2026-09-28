@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') Helpers::respond(['error' => 'Method not allowed'], 405);
+Helpers::requireFeature('public_research', 'Public research pages are switched off.');
 
 try {
     // Anonymous region clusters — no PII

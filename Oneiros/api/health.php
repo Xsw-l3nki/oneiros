@@ -14,7 +14,7 @@ $missingRecommended = array_values(array_filter($recommended, fn($e) => !extensi
 Helpers::respond([
     'status'     => $missingRequired ? 'degraded' : 'healthy',
     'service'    => 'Oneiros',
-    'version'    => '2.1.0',
+    'version'    => $cfg['app_version'],
     'timestamp'  => date('c'),
     'php'        => PHP_VERSION,
     'extensions' => [

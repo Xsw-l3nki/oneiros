@@ -49,6 +49,13 @@ if (!function_exists('mb_encode_mimeheader')) {
 
 class Helpers
 {
+    /** Stop with 403 when a Console feature switch is off. */
+    public static function requireFeature(string $feature, string $message): void
+    {
+        require_once __DIR__ . '/settings.php';
+        if (!Settings::feature($feature)) self::respond(['error' => $message, 'feature_off' => $feature], 403);
+    }
+
     /**
      * Respond with JSON and exit.
      */

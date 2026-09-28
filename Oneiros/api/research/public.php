@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/db.php';
 
 Helpers::only(['GET']);
+Helpers::requireFeature('public_research', 'Public research pages are switched off.');
 
 try {
     $totalDreams = Database::fetchOne('SELECT COUNT(*) as c FROM dreams WHERE privacy IN ("public","research_only") AND is_removed = 0');

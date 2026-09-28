@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     Media::serve($path);
 }
 $user = Auth::require();
-if (empty($cfg['image_api_key']) || !function_exists('curl_init')) {
+if (empty($cfg['feature_ai_paint']) || empty($cfg['image_api_key']) || !function_exists('curl_init')) {
     Helpers::respond(['error' => 'AI painting is not configured. Use Dream Canvas or upload your own image.'], 503);
 }
 $input = Helpers::input();
