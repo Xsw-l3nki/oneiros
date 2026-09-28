@@ -83,6 +83,7 @@ Test::assert('Environment', 'PHP version >= 7.4',
     version_compare(PHP_VERSION, '7.4.0', '>='),
     'Running PHP ' . PHP_VERSION);
 
+// mbstring has fallbacks in includes/helpers.php, but enable it anyway for full Unicode support.
 $requiredExtensions = ['pdo', 'pdo_mysql', 'json', 'mbstring', 'fileinfo'];
 foreach ($requiredExtensions as $ext) {
     Test::assert('Environment', "Extension: $ext",

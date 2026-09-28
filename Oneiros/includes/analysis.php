@@ -4,6 +4,8 @@
  * Phase 1: weighted keyword matching + bigram overlap + related-theme credit.
  * Phase 2 hook: swap analyse() for OpenAI call.
  */
+require_once __DIR__ . '/helpers.php';  // polyfills first
+
 class Analysis
 {
     private static array $THEME_KEYWORDS = [

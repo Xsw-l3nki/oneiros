@@ -11,3 +11,6 @@ uploads/**
 
 # Build artifacts
 *.zip
+
+# Live config (DB password, signing secrets)
+includes/config.php

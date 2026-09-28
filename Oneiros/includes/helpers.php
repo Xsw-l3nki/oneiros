@@ -21,6 +21,32 @@ if (!function_exists('str_ends_with')) {
     }
 }
 
+// mbstring fallbacks — some cPanel PHP builds ship without mbstring, and a missing
+// mb_* function is a fatal error (this is what broke sign-up in v2.x). UTF-8 only.
+if (!function_exists('mb_strlen')) {
+    function mb_strlen(string $s, ?string $encoding = null): int {
+        return function_exists('iconv_strlen') ? (int)iconv_strlen($s, 'UTF-8')
+            : (int)preg_match_all('/./us', $s);
+    }
+}
+if (!function_exists('mb_substr')) {
+    function mb_substr(string $s, int $start, ?int $length = null, ?string $encoding = null): string {
+        $chars = preg_split('//u', $s, -1, PREG_SPLIT_NO_EMPTY);
+        if ($chars === false) $chars = str_split($s); // invalid UTF-8: fall back to bytes
+        return implode('', array_slice($chars, $start, $length));
+    }
+}
+if (!function_exists('mb_strtolower')) {
+    function mb_strtolower(string $s, ?string $encoding = null): string {
+        return strtolower($s);
+    }
+}
+if (!function_exists('mb_encode_mimeheader')) {
+    function mb_encode_mimeheader(string $s, ?string $charset = null, ?string $transfer = null, string $newline = "\r\n", int $indent = 0): string {
+        return preg_match('/[^\x20-\x7E]/', $s) ? '=?UTF-8?B?' . base64_encode($s) . '?=' : $s;
+    }
+}
+
 class Helpers
 {
     /**
